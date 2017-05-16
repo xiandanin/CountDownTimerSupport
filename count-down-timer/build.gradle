@@ -3,6 +3,8 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 version = rootProject.ext.android.versionName
+group = rootProject.ext.jcenter.groupId
+
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -30,7 +32,7 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name rootProject.ext.jcenter.name
+                name rootProject.ext.jcenter.description
                 url rootProject.ext.jcenter.siteUrl
                 licenses {
                     license {
