@@ -1,0 +1,32 @@
+ext {
+    android =
+            [
+                    versionCode      : 1,
+                    versionName      : "1.0.0",
+
+                    compileSdkVersion: 25,
+                    buildToolsVersion: "25.0.2",
+                    minSdkVersion    : 14,
+                    targetSdkVersion : 25,
+                    supportVersion   : "25.3.0",
+            ]
+
+    jcenter =
+            [
+                    //项目名称
+                    name       : "CountDownTimerSupport",
+                    groupId    : "com.dyhdyh.support",
+                    //项目地址
+                    siteUrl    : "https://github.com/dengyuhan/CountDownTimerSupport",
+                    //项目git地址
+                    gitUrl     : "https://github.com/dengyuhan/CountDownTimerSupport.git",
+                    //项目描述
+                    description: "Android倒计时器，支持开始倒计时、暂停倒计时、继续倒计时、停止倒计时、重新倒计时",
+                    //开发者的一些基本信息
+                    authorId   : "dengyuhan",
+                    authorName : "dengyuhan",
+                    authorEmail: "22309946@qq.com",
+            ]
+
+
+}
