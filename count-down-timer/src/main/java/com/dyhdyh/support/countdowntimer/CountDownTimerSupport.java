@@ -7,15 +7,19 @@ import android.os.CountDownTimer;
  * created 2017/5/16 11:32
  */
 public class CountDownTimerSupport implements ITimerSupport {
+
+    private final long DEFAULT_MILLIS_FUTURE = 60000;
+    private final long DEFAULT_COUNT_DOWN_INTERVAL = 1000;
+
     private CountDownTimer mTimer;
     /**
      * 倒计时时间
      */
-    private long mMillisInFuture;
+    private long mMillisInFuture = DEFAULT_MILLIS_FUTURE;
     /**
      * 间隔时间
      */
-    private long mCountDownInterval;
+    private long mCountDownInterval = DEFAULT_COUNT_DOWN_INTERVAL;
     /**
      * 倒计时剩余时间
      */
@@ -25,7 +29,7 @@ public class CountDownTimerSupport implements ITimerSupport {
 
     private TimerState mTimerState = TimerState.FINISH;
 
-    protected CountDownTimerSupport() {
+    public CountDownTimerSupport() {
 
     }
 
@@ -77,6 +81,15 @@ public class CountDownTimerSupport implements ITimerSupport {
     public void reset() {
         stop();
         mTimer = createCountDownTimer(mMillisInFuture, mCountDownInterval);
+    }
+
+
+    public boolean isStart() {
+        return mTimerState == TimerState.START;
+    }
+
+    public boolean isFinish() {
+        return mTimerState == TimerState.FINISH;
     }
 
     protected CountDownTimer createCountDownTimer(long millisInFuture, long countDownInterval) {

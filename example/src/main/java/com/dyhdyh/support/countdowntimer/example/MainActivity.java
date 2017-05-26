@@ -1,5 +1,6 @@
 package com.dyhdyh.support.countdowntimer.example;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -27,9 +28,8 @@ public class MainActivity extends AppCompatActivity {
         ed_future = (EditText) findViewById(R.id.ed_future);
         ed_interval = (EditText) findViewById(R.id.ed_interval);
 
-        long millisInFuture = Long.parseLong(ed_future.getText().toString());
-        long countDownInterval = Long.parseLong(ed_interval.getText().toString());
-        mTimer = new CountDownTimerSupport(millisInFuture, countDownInterval);
+        mTimer = new CountDownTimerSupport();
+        setTimerMillis();
         mTimer.setOnCountDownTimerListener(new OnCountDownTimerListener() {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     public void clickStart(View v) {
+        setTimerMillis();
         mTimer.start();
         tv_state.setText(getStateText());
     }
@@ -65,9 +67,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickResetStart(View v) {
+        setTimerMillis();
         mTimer.reset();
         mTimer.start();
         tv_state.setText(getStateText());
+    }
+
+    public void clickListDownTimer(View v) {
+        startActivity(new Intent(this, DownTimerListActivity.class));
     }
 
     @Override
@@ -101,5 +108,13 @@ public class MainActivity extends AppCompatActivity {
             return "倒计时闲置";
         }
         return "";
+    }
+
+
+    private void setTimerMillis() {
+        long millisInFuture = Long.parseLong(ed_future.getText().toString());
+        long countDownInterval = Long.parseLong(ed_interval.getText().toString());
+        mTimer.setMillisInFuture(millisInFuture);
+        mTimer.setCountDownInterval(countDownInterval);
     }
 }
