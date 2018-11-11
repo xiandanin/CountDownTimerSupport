@@ -1,25 +1,29 @@
 package com.dyhdyh.support.countdowntimer;
 
 import android.os.CountDownTimer;
+import android.os.Handler;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * author  dengyuhan
  * created 2017/5/16 11:32
  */
 public class CountDownTimerSupport implements ITimerSupport {
+    private Timer mTimer;
 
-    private final long DEFAULT_MILLIS_FUTURE = 60000;
-    private final long DEFAULT_COUNT_DOWN_INTERVAL = 1000;
+    private Handler mHandler;
 
-    private CountDownTimer mTimer;
     /**
      * 倒计时时间
      */
-    private long mMillisInFuture = DEFAULT_MILLIS_FUTURE;
+    private long mMillisInFuture;
+
     /**
      * 间隔时间
      */
-    private long mCountDownInterval = DEFAULT_COUNT_DOWN_INTERVAL;
+    private long mCountDownInterval;
     /**
      * 倒计时剩余时间
      */
@@ -29,22 +33,23 @@ public class CountDownTimerSupport implements ITimerSupport {
 
     private TimerState mTimerState = TimerState.FINISH;
 
+    @Deprecated
     public CountDownTimerSupport() {
-
+        this.mHandler = new Handler();
     }
 
     public CountDownTimerSupport(long millisInFuture, long countDownInterval) {
-        this.mMillisInFuture = millisInFuture;
-        this.mCountDownInterval = countDownInterval;
+        this.setMillisInFuture(millisInFuture);
+        this.setCountDownInterval(countDownInterval);
+        this.mHandler = new Handler();
     }
 
     @Override
     public void start() {
-        if (mTimerState != TimerState.START) {
-            if (mTimer == null) {
-                reset();
-            }
-            mTimer.start();
+        //防止重复启动 重新启动要先reset再start
+        if (mTimer == null && mTimerState != TimerState.START) {
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(createTimerTask(), 0, mCountDownInterval);
             mTimerState = TimerState.START;
         }
     }
@@ -52,8 +57,7 @@ public class CountDownTimerSupport implements ITimerSupport {
     @Override
     public void pause() {
         if (mTimer != null && mTimerState == TimerState.START) {
-            mTimer.cancel();
-            mTimer = null;
+            cancelTimer();
             mTimerState = TimerState.PAUSE;
         }
     }
@@ -61,28 +65,43 @@ public class CountDownTimerSupport implements ITimerSupport {
     @Override
     public void resume() {
         if (mTimerState == TimerState.PAUSE) {
-            mTimer = createCountDownTimer(mMillisUntilFinished, mCountDownInterval);
-            mTimer.start();
-            mTimerState = TimerState.START;
+            start();
         }
     }
 
     @Override
     public void stop() {
         if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
-            mMillisUntilFinished = 0;
+            cancelTimer();
+            mMillisUntilFinished = mMillisInFuture;
             mTimerState = TimerState.FINISH;
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mOnCountDownTimerListener != null) {
+                        mOnCountDownTimerListener.onFinish();
+                    }
+                }
+            });
         }
     }
 
     @Override
     public void reset() {
-        stop();
-        mTimer = createCountDownTimer(mMillisInFuture, mCountDownInterval);
+        if (mTimer != null) {
+            cancelTimer();
+        }
+        mMillisUntilFinished = mMillisInFuture;
+        mTimerState = TimerState.FINISH;
     }
 
+
+    private void cancelTimer() {
+        mTimer.cancel();
+        mTimer.purge();
+        mTimer = null;
+    }
 
     public boolean isStart() {
         return mTimerState == TimerState.START;
@@ -92,29 +111,21 @@ public class CountDownTimerSupport implements ITimerSupport {
         return mTimerState == TimerState.FINISH;
     }
 
-    protected CountDownTimer createCountDownTimer(long millisInFuture, long countDownInterval) {
-        return new CountDownTimer(millisInFuture, countDownInterval) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                mMillisUntilFinished = millisUntilFinished;
-                if (mOnCountDownTimerListener != null) {
-                    mOnCountDownTimerListener.onTick(mMillisUntilFinished);
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                if (mOnCountDownTimerListener != null) {
-                    mOnCountDownTimerListener.onFinish();
-                }
-            }
-        };
-    }
-
+    /**
+     * @deprecated 使用构造方法
+     * @param millisInFuture
+     */
+    @Deprecated
     public void setMillisInFuture(long millisInFuture) {
         this.mMillisInFuture = millisInFuture;
+        this.mMillisUntilFinished = mMillisInFuture;
     }
 
+    /**
+     * @deprecated 使用构造方法
+     * @param countDownInterval
+     */
+    @Deprecated
     public void setCountDownInterval(long countDownInterval) {
         this.mCountDownInterval = countDownInterval;
     }
@@ -130,4 +141,56 @@ public class CountDownTimerSupport implements ITimerSupport {
     public TimerState getTimerState() {
         return mTimerState;
     }
+
+    /**
+     * @param millisInFuture
+     * @param countDownInterval
+     * @return
+     * @deprecated 已更换Timer
+     */
+    @Deprecated
+    protected CountDownTimer createCountDownTimer(long millisInFuture, long countDownInterval) {
+        return null;
+    }
+
+    protected TimerTask createTimerTask() {
+        return new TimerTask() {
+            private long startTime = -1;
+
+            @Override
+            public void run() {
+                if (startTime < 0) {
+                    //第一次回调 记录开始时间
+
+                    startTime = scheduledExecutionTime() - (mMillisInFuture - mMillisUntilFinished);
+
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mOnCountDownTimerListener != null) {
+                                mOnCountDownTimerListener.onTick(mMillisUntilFinished);
+                            }
+                        }
+                    });
+                } else {
+                    //剩余时间
+                    mMillisUntilFinished = mMillisInFuture - (scheduledExecutionTime() - startTime);
+
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mOnCountDownTimerListener != null) {
+                                mOnCountDownTimerListener.onTick(mMillisUntilFinished);
+                            }
+                        }
+                    });
+                    if (mMillisUntilFinished <= 0) {
+                        //如果没有剩余时间 就停止
+                        stop();
+                    }
+                }
+            }
+        };
+    }
+
 }

@@ -81,11 +81,18 @@
         android:layout_height="wrap_content"
         android:onClick="clickCancel"
         android:text="取消" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="clickResetStart"
         android:text="重新倒计时" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="clickList"
+        android:text="列表倒计时" />
 
     <LinearLayout
         android:gravity="center_vertical"
