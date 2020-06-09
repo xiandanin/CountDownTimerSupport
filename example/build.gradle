@@ -4,7 +4,7 @@ android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
     defaultConfig {
-        applicationId "com.dyhdyh.support.countdowntimer.example"
+        applicationId "in.xiandan.countdowntimer.example"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.targetSdkVersion
@@ -19,8 +19,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:' + rootProject.ext.android.supportVersion
-    compile 'com.android.support:recyclerview-v7:' + rootProject.ext.android.supportVersion
-    compile project(':count-down-timer')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:' + rootProject.ext.android.supportVersion
+    implementation 'com.android.support:recyclerview-v7:' + rootProject.ext.android.supportVersion
+    implementation project(':count-down-timer')
 }

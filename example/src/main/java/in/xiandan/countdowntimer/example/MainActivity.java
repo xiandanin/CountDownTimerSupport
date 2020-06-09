@@ -1,4 +1,4 @@
-package com.dyhdyh.support.countdowntimer.example;
+package in.xiandan.countdowntimer.example;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.dyhdyh.support.countdowntimer.CountDownTimerSupport;
-import com.dyhdyh.support.countdowntimer.OnCountDownTimerListener;
-import com.dyhdyh.support.countdowntimer.TimerState;
+import in.xiandan.countdowntimer.CountDownTimerSupport;
+import in.xiandan.countdowntimer.OnCountDownTimerListener;
+import in.xiandan.countdowntimer.TimerState;
 
 public class MainActivity extends AppCompatActivity {
     TextView tv;
@@ -30,26 +30,37 @@ public class MainActivity extends AppCompatActivity {
         ed_interval = (EditText) findViewById(R.id.ed_interval);
     }
 
-
     public void clickStart(View v) {
-        if (mTimer == null) {
-            long millisInFuture = Long.parseLong(ed_future.getText().toString());
-            long countDownInterval = Long.parseLong(ed_interval.getText().toString());
-            mTimer = new CountDownTimerSupport(millisInFuture, countDownInterval);
-            mTimer.setOnCountDownTimerListener(new OnCountDownTimerListener() {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    tv.setText(millisUntilFinished + "ms\n" + millisUntilFinished / 1000 + "s");
-                    Log.d("CountDownTimerSupport", "onTick : " + millisUntilFinished + "ms");
-                }
-
-                @Override
-                public void onFinish() {
-                    tv.setText("已停止");
-                    Log.d("CountDownTimerSupport", "onFinish");
-                }
-            });
+        if (mTimer != null) {
+            mTimer.stop();
+            mTimer = null;
         }
+        long millisInFuture = Long.parseLong(ed_future.getText().toString());
+        long countDownInterval = Long.parseLong(ed_interval.getText().toString());
+        mTimer = new CountDownTimerSupport(millisInFuture, countDownInterval);
+        mTimer.setOnCountDownTimerListener(new OnCountDownTimerListener() {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                tv.setText(millisUntilFinished + "ms\n" + millisUntilFinished / 1000 + "s");
+                Log.d("CountDownTimerSupport", "onTick : " + millisUntilFinished + "ms");
+            }
+
+            @Override
+            public void onFinish() {
+                tv.setText("倒计时已结束");
+                Log.d("CountDownTimerSupport", "onFinish");
+
+                tv_state.setText(getStateText());
+            }
+
+            @Override
+            public void onCancel() {
+                tv.setText("倒计时已手动停止");
+                Log.d("CountDownTimerSupport", "onCancel");
+
+                tv_state.setText(getStateText());
+            }
+        });
         mTimer.start();
         tv_state.setText(getStateText());
     }
@@ -73,8 +84,6 @@ public class MainActivity extends AppCompatActivity {
     public void clickCancel(View v) {
         if (mTimer != null) {
             mTimer.stop();
-
-            tv_state.setText(getStateText());
         }
     }
 

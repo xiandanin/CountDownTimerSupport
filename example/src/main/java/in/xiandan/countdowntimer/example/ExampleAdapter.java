@@ -1,4 +1,4 @@
-package com.dyhdyh.support.countdowntimer.example;
+package in.xiandan.countdowntimer.example;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dyhdyh.support.countdowntimer.TimerState;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
 
+import in.xiandan.countdowntimer.TimerState;
+
 /**
- * @author dengyuhan
+ * @author xiandanin
  * created 2018/11/9 17:52
  */
 public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.Holder> {

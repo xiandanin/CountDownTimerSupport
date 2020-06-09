@@ -1,7 +1,7 @@
-package com.dyhdyh.support.countdowntimer;
+package in.xiandan.countdowntimer;
 
 /**
- * author  dengyuhan
+ * author  xiandanin
  * created 2017/5/16 13:28
  */
 public enum TimerState {

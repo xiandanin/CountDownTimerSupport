@@ -1,9 +1,10 @@
-package com.dyhdyh.support.countdowntimer.example;
+package in.xiandan.countdowntimer.example;
 
-import com.dyhdyh.support.countdowntimer.TimerState;
+
+import in.xiandan.countdowntimer.TimerState;
 
 /**
- * @author dengyuhan
+ * @author xiandanin
  * created 2018/11/11 11:19
  */
 public class TimeInfo {

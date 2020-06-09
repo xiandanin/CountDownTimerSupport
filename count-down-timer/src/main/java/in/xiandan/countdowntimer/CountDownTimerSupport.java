@@ -1,13 +1,12 @@
-package com.dyhdyh.support.countdowntimer;
+package in.xiandan.countdowntimer;
 
-import android.os.CountDownTimer;
 import android.os.Handler;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * author  dengyuhan
+ * author  xiandanin
  * created 2017/5/16 11:32
  */
 public class CountDownTimerSupport implements ITimerSupport {
@@ -71,20 +70,7 @@ public class CountDownTimerSupport implements ITimerSupport {
 
     @Override
     public void stop() {
-        if (mTimer != null) {
-            cancelTimer();
-            mMillisUntilFinished = mMillisInFuture;
-            mTimerState = TimerState.FINISH;
-
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mOnCountDownTimerListener != null) {
-                        mOnCountDownTimerListener.onFinish();
-                    }
-                }
-            });
-        }
+        stopTimer(true);
     }
 
     @Override
@@ -96,6 +82,26 @@ public class CountDownTimerSupport implements ITimerSupport {
         mTimerState = TimerState.FINISH;
     }
 
+    private void stopTimer(final boolean cancel) {
+        if (mTimer != null) {
+            cancelTimer();
+            mMillisUntilFinished = mMillisInFuture;
+            mTimerState = TimerState.FINISH;
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mOnCountDownTimerListener != null) {
+                        if (cancel) {
+                            mOnCountDownTimerListener.onCancel();
+                        } else {
+                            mOnCountDownTimerListener.onFinish();
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     private void cancelTimer() {
         mTimer.cancel();
@@ -112,8 +118,8 @@ public class CountDownTimerSupport implements ITimerSupport {
     }
 
     /**
-     * @deprecated 使用构造方法
      * @param millisInFuture
+     * @deprecated 使用构造方法
      */
     @Deprecated
     public void setMillisInFuture(long millisInFuture) {
@@ -122,8 +128,8 @@ public class CountDownTimerSupport implements ITimerSupport {
     }
 
     /**
-     * @deprecated 使用构造方法
      * @param countDownInterval
+     * @deprecated 使用构造方法
      */
     @Deprecated
     public void setCountDownInterval(long countDownInterval) {
@@ -140,17 +146,6 @@ public class CountDownTimerSupport implements ITimerSupport {
 
     public TimerState getTimerState() {
         return mTimerState;
-    }
-
-    /**
-     * @param millisInFuture
-     * @param countDownInterval
-     * @return
-     * @deprecated 已更换Timer
-     */
-    @Deprecated
-    protected CountDownTimer createCountDownTimer(long millisInFuture, long countDownInterval) {
-        return null;
     }
 
     protected TimerTask createTimerTask() {
@@ -186,7 +181,7 @@ public class CountDownTimerSupport implements ITimerSupport {
                     });
                     if (mMillisUntilFinished <= 0) {
                         //如果没有剩余时间 就停止
-                        stop();
+                        stopTimer(false);
                     }
                 }
             }

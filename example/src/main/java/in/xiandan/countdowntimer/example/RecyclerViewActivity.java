@@ -1,4 +1,5 @@
-package com.dyhdyh.support.countdowntimer.example;
+package in.xiandan.countdowntimer.example;
+
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,16 +8,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.dyhdyh.support.countdowntimer.CountDownTimerSupport;
-import com.dyhdyh.support.countdowntimer.OnCountDownTimerListener;
-import com.dyhdyh.support.countdowntimer.TimerState;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import in.xiandan.countdowntimer.CountDownTimerSupport;
+import in.xiandan.countdowntimer.OnCountDownTimerListener;
+import in.xiandan.countdowntimer.TimerState;
+
 /**
- * @author dengyuhan
+ * @author xiandanin
  * created 2018/11/9 17:50
  */
 public class RecyclerViewActivity extends AppCompatActivity {
@@ -67,6 +68,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 Log.d("CountDownTimerSupport", "onFinish");
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d("CountDownTimerSupport", "onCancel");
             }
         });
         mTimer.start();
