@@ -11,7 +11,7 @@ Android倒计时器，支持开始倒计时、暂停倒计时、继续倒计时�
 ## 快速开始
 ### Android Studio - 在build.gradle中引入
 ```java
-compile 'in.xiandan:count-down-timer:1.0.3'
+implementation 'in.xiandan:count-down-timer:1.0.3'
 ```
 
 ### 旧版请谨慎升级到1.0.3以上
